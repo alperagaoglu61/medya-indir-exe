@@ -212,9 +212,11 @@ internal static class Program
 
         string args = format == "mp3"
             ? $"-x --audio-format mp3 --audio-quality {kalite}K --embed-thumbnail --add-metadata " +
+              $"--no-playlist --no-abort-on-error " +
               $"--ffmpeg-location \"{ToolsDir}\" -o \"{outputTemplate}\" \"{url}\""
             : $"-f \"bestvideo[height<={kalite}][vcodec^=avc1]+bestaudio[ext=m4a]/bestvideo[height<={kalite}][ext=mp4]+bestaudio[ext=m4a]/best[height<={kalite}][ext=mp4]/best[height<={kalite}]\" " +
-              $"--merge-output-format mp4 --ffmpeg-location \"{ToolsDir}\" -o \"{outputTemplate}\" \"{url}\"";
+              $"--merge-output-format mp4 --no-playlist --no-abort-on-error " +
+              $"--ffmpeg-location \"{ToolsDir}\" -o \"{outputTemplate}\" \"{url}\"";
 
         var psi = new ProcessStartInfo
         {
