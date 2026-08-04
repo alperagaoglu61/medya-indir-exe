@@ -26,6 +26,26 @@ $LocalFfmpeg = Join-Path $ScriptDir "ffmpeg.exe"
 $YtDlpExe  = if (Test-Path $LocalYtDlp) { $LocalYtDlp } else { "yt-dlp" }
 $FfmpegDir = if (Test-Path $LocalFfmpeg) { $ScriptDir } else { $null }
 
+# Indirme hizi ayarlari.
+#
+# Olcum notu: YouTube'da hiz esas olarak sunucu/CDN tarafinda belirleniyor.
+# Ayni ayarla ayni saatte 23 MB/s de 87 MB/s de olculdu. aria2c ile 16 paralel
+# baglantiya bolmek tutarli kazanc vermedi, bazi videolarda daha yavas oldu;
+# bu yuzden yt-dlp'nin kendi indiricisi kullaniliyor.
+#
+#   -N 8               : parcali (HLS/DASH) akislarda 8 fragment paralel iner.
+#                        Instagram/TikTok gibi siteler icin onemli; YouTube'un
+#                        tek parcali (protocol=https) formatlarinda etkisi yok.
+#   --throttled-rate   : hiz 100 KB/s altina duserse baglanti yeniden kurulur
+#   --retries / --fragment-retries : gecici kopmalarda tekrar dener
+$HizArgs = @(
+    "-N", "8",
+    "--throttled-rate", "100K",
+    "--retries", "10",
+    "--fragment-retries", "10",
+    "--retry-sleep", "1"
+)
+
 # ---------------- Fonksiyonlar ----------------
 
 function Test-Gereksinimler {
@@ -94,6 +114,7 @@ function Invoke-Indirme {
         & $YtDlpExe -x --audio-format mp3 --audio-quality "${Kalite}K" `
             --embed-thumbnail --add-metadata `
             --no-playlist --no-abort-on-error `
+            @HizArgs `
             @ffmpegArgs `
             -o $outputTemplate `
             $Url
@@ -102,6 +123,7 @@ function Invoke-Indirme {
         $formatSecimi = "bestvideo[height<=$Kalite][vcodec^=avc1]+bestaudio[ext=m4a]/bestvideo[height<=$Kalite][ext=mp4]+bestaudio[ext=m4a]/best[height<=$Kalite][ext=mp4]/best[height<=$Kalite]"
         & $YtDlpExe -f $formatSecimi `
             --merge-output-format mp4 --no-playlist --no-abort-on-error `
+            @HizArgs `
             @ffmpegArgs `
             -o $outputTemplate `
             $Url

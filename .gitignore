@@ -2,3 +2,10 @@ bin/
 obj/
 out/
 Tools/
+
+# Derleme cikti ve harici araclar - GitHub Release uzerinden dagitiliyor.
+# ffmpeg.exe / ffprobe.exe zaten GitHub'in 100 MB dosya limitini asiyor.
+MediaIndir.exe
+yt-dlp.exe
+ffmpeg.exe
+ffprobe.exe

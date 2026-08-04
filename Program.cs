@@ -16,6 +16,21 @@ internal static class Program
     private static string YtDlpPath => Path.Combine(ToolsDir, "yt-dlp.exe");
     private static string FfmpegPath => Path.Combine(ToolsDir, "ffmpeg.exe");
 
+    // Indirme hizi ayarlari.
+    //
+    // Olcum notu: YouTube'da hiz esas olarak sunucu/CDN tarafinda belirleniyor.
+    // Ayni ayarla ayni saatte 23 MB/s de 87 MB/s de olculdu. aria2c ile 16 paralel
+    // baglantiya bolmek tutarli kazanc vermedi, bazi videolarda daha yavas oldu;
+    // bu yuzden yt-dlp'nin kendi indiricisi kullaniliyor.
+    //
+    //   -N 8               : parcali (HLS/DASH) akislarda 8 fragment paralel iner.
+    //                        Instagram/TikTok gibi siteler icin onemli; YouTube'un
+    //                        tek parcali (protocol=https) formatlarinda etkisi yok.
+    //   --throttled-rate   : hiz 100 KB/s altina duserse baglanti yeniden kurulur
+    //   --retries / --fragment-retries : gecici kopmalarda tekrar dener
+    private const string HizArgs =
+        "-N 8 --throttled-rate 100K --retries 10 --fragment-retries 10 --retry-sleep 1";
+
     private static int Main()
     {
         Console.OutputEncoding = System.Text.Encoding.UTF8;
@@ -212,10 +227,10 @@ internal static class Program
 
         string args = format == "mp3"
             ? $"-x --audio-format mp3 --audio-quality {kalite}K --embed-thumbnail --add-metadata " +
-              $"--no-playlist --no-abort-on-error " +
+              $"--no-playlist --no-abort-on-error {HizArgs} " +
               $"--ffmpeg-location \"{ToolsDir}\" -o \"{outputTemplate}\" \"{url}\""
             : $"-f \"bestvideo[height<={kalite}][vcodec^=avc1]+bestaudio[ext=m4a]/bestvideo[height<={kalite}][ext=mp4]+bestaudio[ext=m4a]/best[height<={kalite}][ext=mp4]/best[height<={kalite}]\" " +
-              $"--merge-output-format mp4 --no-playlist --no-abort-on-error " +
+              $"--merge-output-format mp4 --no-playlist --no-abort-on-error {HizArgs} " +
               $"--ffmpeg-location \"{ToolsDir}\" -o \"{outputTemplate}\" \"{url}\"";
 
         var psi = new ProcessStartInfo
