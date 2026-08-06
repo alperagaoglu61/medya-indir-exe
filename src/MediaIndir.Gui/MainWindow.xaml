@@ -1,0 +1,300 @@
+<ui:FluentWindow x:Class="MediaIndir.Gui.MainWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 xmlns:vm="clr-namespace:MediaIndir.Gui.ViewModels"
+                 Title="MediaIndir"
+                 Width="900"
+                 Height="650"
+                 MinWidth="620"
+                 MinHeight="420"
+                 ExtendsContentIntoTitleBar="True"
+                 WindowBackdropType="Mica"
+                 WindowCornerPreference="Round"
+                 WindowStartupLocation="CenterScreen"
+                 d:DataContext="{d:DesignInstance vm:MainViewModel}"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 mc:Ignorable="d">
+
+    <ui:FluentWindow.Resources>
+
+        <!-- MP4 / MP3 segmented dugmeleri -->
+        <Style x:Key="SegmentButton" TargetType="RadioButton">
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+            <Setter Property="Padding" Value="18,6" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="Kutu"
+                                Background="Transparent"
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Kutu" Property="Background"
+                                        Value="{DynamicResource ControlFillColorSecondaryBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Kutu" Property="Background"
+                                        Value="{DynamicResource AccentFillColorDefaultBrush}" />
+                                <Setter Property="Foreground"
+                                        Value="{DynamicResource TextOnAccentFillColorPrimaryBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Kuyruk satiri -->
+        <DataTemplate x:Key="KuyrukSatiri" DataType="{x:Type vm:DownloadItemViewModel}">
+            <Border x:Name="Satir"
+                    Margin="0,0,0,8"
+                    Padding="12,10"
+                    CornerRadius="8"
+                    Background="{DynamicResource ControlFillColorDefaultBrush}"
+                    BorderBrush="{DynamicResource ControlElevationBorderBrush}"
+                    BorderThickness="1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Kapak / ikon -->
+                    <Border Grid.Column="0"
+                            Width="64" Height="40"
+                            Margin="0,0,12,0"
+                            CornerRadius="4"
+                            Background="{DynamicResource ControlFillColorSecondaryBrush}">
+                        <Grid>
+                            <TextBlock x:Name="YedekIkon"
+                                       Text="&#xE896;"
+                                       FontFamily="Segoe MDL2 Assets"
+                                       FontSize="16"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+                            <Image Source="{Binding ThumbnailUrl}" Stretch="UniformToFill" />
+                        </Grid>
+                    </Border>
+
+                    <!-- Baslik + ilerleme + detay -->
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding Title}"
+                                   FontWeight="SemiBold"
+                                   TextTrimming="CharacterEllipsis"
+                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+
+                        <ProgressBar Height="3"
+                                     Margin="0,8,0,6"
+                                     Minimum="0"
+                                     Maximum="100"
+                                     Value="{Binding Percent, Mode=OneWay}" />
+
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding StatusText}"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+                            <TextBlock Text=" · " FontSize="11"
+                                       Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+                            <TextBlock Text="{Binding DetailLine}"
+                                       FontSize="11"
+                                       TextTrimming="CharacterEllipsis"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Iptal / klasorde goster -->
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                        <ui:Button Command="{Binding CancelCommand}"
+                                   Visibility="{Binding CanCancel, Converter={StaticResource BoolToVis}}"
+                                   Appearance="Secondary"
+                                   ToolTip="İptal et"
+                                   Padding="8,4">
+                            <TextBlock Text="&#xE711;" FontFamily="Segoe MDL2 Assets" FontSize="12" />
+                        </ui:Button>
+
+                        <ui:Button Command="{Binding ShowInFolderCommand}"
+                                   Visibility="{Binding CanShowInFolder, Converter={StaticResource BoolToVis}}"
+                                   Appearance="Secondary"
+                                   ToolTip="Klasörde göster"
+                                   Padding="8,4">
+                            <TextBlock Text="&#xE8B7;" FontFamily="Segoe MDL2 Assets" FontSize="12" />
+                        </ui:Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <DataTemplate.Triggers>
+                <!-- Biten ogeler soluk gorunur -->
+                <DataTrigger Binding="{Binding IsFinished}" Value="True">
+                    <Setter TargetName="Satir" Property="Opacity" Value="0.5" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ThumbnailUrl}" Value="{x:Null}">
+                    <Setter TargetName="YedekIkon" Property="Visibility" Value="Visible" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+    </ui:FluentWindow.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0" Title="MediaIndir" />
+
+        <!-- ust bolum -->
+        <StackPanel Grid.Row="1" Margin="20,12,20,8">
+
+            <!-- Link + Indir -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <ui:TextBox x:Name="LinkKutusu"
+                            Grid.Column="0"
+                            Margin="0,0,8,0"
+                            FontSize="14"
+                            PlaceholderText="Link yapıştır"
+                            Text="{Binding Url, UpdateSourceTrigger=PropertyChanged}"
+                            TextChanged="LinkKutusu_TextChanged">
+                    <ui:TextBox.InputBindings>
+                        <KeyBinding Key="Enter" Command="{Binding DownloadCommand}" />
+                    </ui:TextBox.InputBindings>
+                </ui:TextBox>
+
+                <ui:Button Grid.Column="1"
+                           Command="{Binding DownloadCommand}"
+                           Appearance="Primary"
+                           MinWidth="110"
+                           Padding="16,8">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE896;" FontFamily="Segoe MDL2 Assets" FontSize="13"
+                                   VerticalAlignment="Center" Margin="0,0,8,0" />
+                        <TextBlock Text="İndir" VerticalAlignment="Center" />
+                    </StackPanel>
+                </ui:Button>
+            </Grid>
+
+            <!-- Format + kalite + klasor -->
+            <Grid Margin="0,12,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0"
+                        CornerRadius="8"
+                        Padding="3"
+                        Background="{DynamicResource ControlFillColorDefaultBrush}"
+                        BorderBrush="{DynamicResource ControlElevationBorderBrush}"
+                        BorderThickness="1">
+                    <StackPanel Orientation="Horizontal">
+                        <RadioButton Style="{StaticResource SegmentButton}"
+                                     GroupName="Format"
+                                     Content="MP4"
+                                     IsChecked="{Binding IsMp4}" />
+                        <RadioButton Style="{StaticResource SegmentButton}"
+                                     GroupName="Format"
+                                     Content="MP3"
+                                     IsChecked="{Binding IsMp3}" />
+                    </StackPanel>
+                </Border>
+
+                <ComboBox Grid.Column="1"
+                          Margin="10,0,0,0"
+                          MinWidth="110"
+                          VerticalAlignment="Center"
+                          ItemsSource="{Binding Qualities}"
+                          SelectedItem="{Binding SelectedQuality}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}{0}{1}">
+                                        <Binding Mode="OneWay" />
+                                        <Binding Path="DataContext.QualitySuffix"
+                                                 RelativeSource="{RelativeSource AncestorType=ComboBox}"
+                                                 Mode="OneWay" />
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
+                <TextBlock Grid.Column="2"
+                           Margin="16,0,12,0"
+                           VerticalAlignment="Center"
+                           TextTrimming="CharacterEllipsis"
+                           ToolTip="{Binding OutputFolder}"
+                           Text="{Binding OutputFolder}"
+                           FontSize="12"
+                           Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+
+                <ui:Button Grid.Column="3"
+                           Command="{Binding ChooseFolderCommand}"
+                           Appearance="Secondary"
+                           ToolTip="Klasör seç"
+                           Padding="12,7">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE8B7;" FontFamily="Segoe MDL2 Assets" FontSize="13"
+                                   VerticalAlignment="Center" Margin="0,0,8,0" />
+                        <TextBlock Text="Klasör" VerticalAlignment="Center" />
+                    </StackPanel>
+                </ui:Button>
+            </Grid>
+
+            <CheckBox Margin="0,10,0,0"
+                      Content="Panoya kopyalanan linkleri otomatik al"
+                      IsChecked="{Binding ClipboardWatch}"
+                      FontSize="12" />
+        </StackPanel>
+
+        <!-- alt bolum: kuyruk -->
+        <Grid Grid.Row="2" Margin="20,4,20,16">
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          Visibility="{Binding HasItems, Converter={StaticResource BoolToVis}}">
+                <ItemsControl ItemsSource="{Binding Items}"
+                              ItemTemplate="{StaticResource KuyrukSatiri}" />
+            </ScrollViewer>
+
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <StackPanel.Style>
+                    <Style TargetType="StackPanel">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding HasItems}" Value="False">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
+
+                <TextBlock Text="&#xE896;"
+                           FontFamily="Segoe MDL2 Assets"
+                           FontSize="28"
+                           HorizontalAlignment="Center"
+                           Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+                <TextBlock Text="Kuyruk boş — bir link yapıştır"
+                           Margin="0,10,0,0"
+                           Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</ui:FluentWindow>

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <RootNamespace>MediaIndir.Core</RootNamespace>
+    <AssemblyName>MediaIndir.Core</AssemblyName>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--
+      Gomulu araclar. Bu dosyalari Tools klasorune kendin koyacaksin
+      (NASIL-DERLENIR.md dosyasindaki talimata bak).
+
+      Araclar Core icinde gomulu durur; hem konsol hem WPF arayuzu ayni
+      assembly'den okur, ikili kopya olusmaz.
+    -->
+    <EmbeddedResource Include="Tools\yt-dlp.exe" LogicalName="yt-dlp.exe" />
+    <EmbeddedResource Include="Tools\ffmpeg.exe" LogicalName="ffmpeg.exe" />
+    <EmbeddedResource Include="Tools\ffprobe.exe" LogicalName="ffprobe.exe" />
+  </ItemGroup>
+
+</Project>

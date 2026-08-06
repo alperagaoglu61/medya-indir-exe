@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <RootNamespace>MediaIndir</RootNamespace>
     <AssemblyName>MediaIndir</AssemblyName>
     <Nullable>enable</Nullable>
@@ -18,9 +18,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- Bu iki dosyayi Tools klasorune kendin koyacaksin (asagidaki talimata bak) -->
-    <EmbeddedResource Include="Tools\yt-dlp.exe" LogicalName="yt-dlp.exe" />
-    <EmbeddedResource Include="Tools\ffmpeg.exe" LogicalName="ffmpeg.exe" />
+    <!-- Gomulu araclar Core icinde durur, buraya kopyalanmaz. -->
+    <ProjectReference Include="..\MediaIndir.Core\MediaIndir.Core.csproj" />
   </ItemGroup>
 
 </Project>

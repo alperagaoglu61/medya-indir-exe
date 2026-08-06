@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/MediaIndir.Console/MediaIndir.Console.csproj" />
+    <Project Path="src/MediaIndir.Core/MediaIndir.Core.csproj" />
+    <Project Path="src/MediaIndir.Gui/MediaIndir.Gui.csproj" />
+  </Folder>
+</Solution>
