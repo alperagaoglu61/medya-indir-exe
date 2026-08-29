@@ -1,12 +1,112 @@
+# ---------------------------------------------------------------------------
+# Hassas bilgiler / kimlik bilgileri
+# ---------------------------------------------------------------------------
+.env
+.env.*
+*.env
+secrets.*
+*secret*
+*credential*
+*password*
+*apikey*
+*api_key*
+*token*
+*.key
+*.pem
+*.pfx
+*.p12
+*.cer
+*.crt
+*.snk
+*.pubxml
+*.pubxml.user
+*.publishsettings
+.netrc
+.npmrc
+id_rsa
+id_rsa.*
+id_ed25519
+id_ed25519.*
+known_hosts
+*.ppk
+
+# PowerShell kimlik/oturum dosyalari
+*.psd1.user
+*.clixml
+*Credential*.xml
+
+# yt-dlp / tarayici cerez ve oturum dosyalari
+cookies.txt
+*cookies*.txt
+*.netscape
+yt-dlp.conf
+.netrc.gpg
+
+# Uygulama ayarlari (kullaniciya ozel yollar icerebilir)
+settings.json
+
+# ---------------------------------------------------------------------------
+# Loglar ve raporlar
+# ---------------------------------------------------------------------------
+*.log
+logs/
+log/
+*.etl
+*.evtx
+*.dmp
+*.trace
+
+# ---------------------------------------------------------------------------
+# Indirilen medya (kullanici icerigi, depoya girmemeli)
+# ---------------------------------------------------------------------------
+MediaIndirilenler/
+*.mp3
+*.mp4
+*.m4a
+*.webm
+*.mkv
+*.part
+*.ytdl
+
+# ---------------------------------------------------------------------------
+# Derleme ciktilari ve gecici dosyalar
+# ---------------------------------------------------------------------------
 bin/
 obj/
 out/
-Tools/
+build/
+dist/
+temp/
+tmp/
+*.tmp
+*.bak
+*.old
+*.orig
+*.swp
+~$*
 
-# Derleme cikti ve harici araclar - GitHub Release uzerinden dagitiliyor.
+# ---------------------------------------------------------------------------
+# Harici araclar ve buyuk exe'ler - GitHub Release uzerinden dagitiliyor.
 # ffmpeg.exe / ffprobe.exe zaten GitHub'in 100 MB dosya limitini asiyor.
+# ---------------------------------------------------------------------------
+Tools/
 MediaIndir.exe
 MediaIndirGui.exe
 yt-dlp.exe
 ffmpeg.exe
 ffprobe.exe
+
+# ---------------------------------------------------------------------------
+# Isletim sistemi / editor
+# ---------------------------------------------------------------------------
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+.DS_Store
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
